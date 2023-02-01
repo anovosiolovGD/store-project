@@ -1,44 +1,43 @@
 package com.nvs.store.controllers;
 
-import com.nvs.store.exceptions.NotFoundException;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
 
 @RestController
-@RequestMapping("products")
+@RequestMapping("/api/v1/auth/products")
 public class ProductController {
     private int counter = 1;
-    private final List<Map<String, String>> products = new ArrayList<Map<String, String>>() {{
-        add(new TreeMap<String, String>() {{
+    private final List<Map<String, String>> products = new ArrayList<>() {{
+        add(new TreeMap<>() {{
             put("id", String.valueOf(counter++));
             put("name", "iPhone XS");
         }});
-        add(new TreeMap<String, String>() {{
+        add(new TreeMap<>() {{
             put("id", String.valueOf(counter++));
             put("name", "iPhone 13");
         }});
-        add(new TreeMap<String, String>() {{
+        add(new TreeMap<>() {{
             put("id", String.valueOf(counter++));
             put("name", "iPhone 6S Plus");
         }});
     }};
 
-    @GetMapping
+    @GetMapping("all")
     public List<Map<String, String>> allProducts() {
         return products;
     }
 
     @GetMapping("{id}")
-    public Map<String, String> getProduct(@PathVariable String id) {
+    public Map<String, String> getProduct(@PathVariable String id) throws Exception {
         return findById(id);
     }
 
-    private Map<String, String> findById(String id) {
+    private Map<String, String> findById(String id) throws Exception {
         return products.stream()
                 .filter(product -> product.get("id").equals(id))
                 .findFirst()
-                .orElseThrow(NotFoundException::new);
+                .orElseThrow(Exception::new);
     }
 
     @PostMapping
@@ -48,7 +47,7 @@ public class ProductController {
         return product;
     }
     @PutMapping ("{id}")
-    public Map<String,String> updateProduct(@PathVariable String id,@RequestBody Map<String,String> product){
+    public Map<String,String> updateProduct(@PathVariable String id,@RequestBody Map<String,String> product) throws Exception {
         Map<String,String> productFromDB = getProduct(id);
 
         productFromDB.putAll(product);
@@ -56,7 +55,7 @@ public class ProductController {
         return productFromDB;
     }
     @DeleteMapping("{id}")
-    public void deleteProduct(@PathVariable String id){
+    public void deleteProduct(@PathVariable String id) throws Exception {
         Map<String,String> product = getProduct(id);
         products.remove(product);
     }
