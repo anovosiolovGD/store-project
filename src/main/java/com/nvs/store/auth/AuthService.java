@@ -5,10 +5,14 @@ import com.nvs.store.models.user.Role;
 import com.nvs.store.models.user.User;
 import com.nvs.store.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import static org.springframework.http.HttpStatus.BAD_REQUEST;
+import static org.springframework.http.HttpStatus.CREATED;
 
 @Service
 @RequiredArgsConstructor
@@ -18,12 +22,13 @@ public class AuthService {
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
 
-    public AuthResponse register(RegisterRequest request) {
+    public ResponseEntity<String> register(RegisterRequest request) {
         if (userRepository.findByEmail(request.getEmail()).isPresent()) {
-            return AuthResponse.builder()
-                    .authStatus(request.getEmail() + " : user already registered")
-                    .jwtToken("You already have a token. Login please.")
-                    .build();
+//            return AuthResponse.builder()
+//                    .authStatus(request.getEmail() + " : user already registered")
+//                    .jwtToken("You already have a token. Login please.")
+//                    .build();
+           return ResponseEntity.status(BAD_REQUEST).body(request.getEmail() + " : user already registered");
         }
 
         var user = User.builder()
@@ -37,11 +42,7 @@ public class AuthService {
 
         var jwtToken = jwtService.generateToken(user);
 
-        return AuthResponse
-                .builder()
-                .authStatus("Successfully registered")
-                .jwtToken(jwtToken)
-                .build();
+        return ResponseEntity.status(CREATED).body(jwtToken);
 
     }
 

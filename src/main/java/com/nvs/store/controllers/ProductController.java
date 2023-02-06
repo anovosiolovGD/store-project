@@ -1,62 +1,59 @@
 package com.nvs.store.controllers;
 
+import com.nvs.store.models.product.Product;
+import com.nvs.store.service.ProductService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.*;
+import java.util.List;
+
+import static org.springframework.http.HttpStatus.CREATED;
+import static org.springframework.http.HttpStatus.NOT_FOUND;
 
 @RestController
 @RequestMapping("/api/v1/auth/products")
+@RequiredArgsConstructor
 public class ProductController {
-    private int counter = 1;
-    private final List<Map<String, String>> products = new ArrayList<>() {{
-        add(new TreeMap<>() {{
-            put("id", String.valueOf(counter++));
-            put("name", "iPhone XS");
-        }});
-        add(new TreeMap<>() {{
-            put("id", String.valueOf(counter++));
-            put("name", "iPhone 13");
-        }});
-        add(new TreeMap<>() {{
-            put("id", String.valueOf(counter++));
-            put("name", "iPhone 6S Plus");
-        }});
-    }};
 
-    @GetMapping("all")
-    public List<Map<String, String>> allProducts() {
-        return products;
+    private final ProductService productService;
+
+
+    @GetMapping
+    public ResponseEntity<List<Product>> getAllProducts() {
+
+        List<Product> products = productService.getAllProducts();
+        return ResponseEntity.ok(products);
     }
 
     @GetMapping("{id}")
-    public Map<String, String> getProduct(@PathVariable String id) throws Exception {
-        return findById(id);
+    public ResponseEntity<Product> getProduct(@PathVariable Long id){
+        if (productService.get(id)==null){
+            return ResponseEntity.status(NOT_FOUND).body(null);
+        }
+        return  ResponseEntity.ok(productService.get(id));
     }
 
-    private Map<String, String> findById(String id) throws Exception {
-        return products.stream()
-                .filter(product -> product.get("id").equals(id))
-                .findFirst()
-                .orElseThrow(Exception::new);
-    }
+
+
 
     @PostMapping
-    public Map<String, String> addProduct(@RequestBody Map<String, String> product) {
-        product.put("id", String.valueOf(counter++));
-        products.add(product);
-        return product;
+    public ResponseEntity<Product> addProduct(@RequestBody Product product) {
+        Product added = productService.addProduct(product);
+        return ResponseEntity.status(CREATED).body(added);
     }
-    @PutMapping ("{id}")
-    public Map<String,String> updateProduct(@PathVariable String id,@RequestBody Map<String,String> product) throws Exception {
-        Map<String,String> productFromDB = getProduct(id);
 
-        productFromDB.putAll(product);
-        productFromDB.put("id",id);
-        return productFromDB;
-    }
+//    @PutMapping("{id}")
+//    public Map<String, String> updateProduct(@PathVariable String id, @RequestBody Map<String, String> product) throws Exception {
+//        Map<String, String> productFromDB = getProduct(id);
+//
+//        productFromDB.putAll(product);
+//        productFromDB.put("id", id);
+//        return productFromDB;
+//    }
+//
     @DeleteMapping("{id}")
-    public void deleteProduct(@PathVariable String id) throws Exception {
-        Map<String,String> product = getProduct(id);
-        products.remove(product);
+    public void deleteProduct(@PathVariable Long id) throws Exception {
+        productService.delete(id);
     }
 }
