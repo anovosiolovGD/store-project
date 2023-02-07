@@ -27,14 +27,17 @@ public class ProductController {
     }
 
     @GetMapping("{id}")
-    public ResponseEntity<Product> getProduct(@PathVariable Long id){
-        if (productService.get(id)==null){
+    public ResponseEntity<Product> getProduct(@PathVariable Long id) {
+        if (productService.get(id) == null) {
             return ResponseEntity.status(NOT_FOUND).body(null);
         }
-        return  ResponseEntity.ok(productService.get(id));
+        return ResponseEntity.ok(productService.get(id));
     }
 
-
+    @GetMapping("/all/{id}")
+    public ResponseEntity<List<Product>> get(@PathVariable Long id) {
+        return null;
+    }
 
 
     @PostMapping
@@ -43,7 +46,7 @@ public class ProductController {
         return ResponseEntity.status(CREATED).body(added);
     }
 
-//    @PutMapping("{id}")
+    //    @PutMapping("{id}")
 //    public Map<String, String> updateProduct(@PathVariable String id, @RequestBody Map<String, String> product) throws Exception {
 //        Map<String, String> productFromDB = getProduct(id);
 //
@@ -53,7 +56,7 @@ public class ProductController {
 //    }
 //
     @DeleteMapping("{id}")
-    public void deleteProduct(@PathVariable Long id) throws Exception {
+    public void deleteProduct(@PathVariable Long id) {
         productService.delete(id);
     }
 }

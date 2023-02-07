@@ -11,8 +11,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import static org.springframework.http.HttpStatus.BAD_REQUEST;
-import static org.springframework.http.HttpStatus.CREATED;
+import static org.springframework.http.HttpStatus.*;
 
 @Service
 @RequiredArgsConstructor
@@ -24,13 +23,8 @@ public class AuthService {
 
     public ResponseEntity<String> register(RegisterRequest request) {
         if (userRepository.findByEmail(request.getEmail()).isPresent()) {
-//            return AuthResponse.builder()
-//                    .authStatus(request.getEmail() + " : user already registered")
-//                    .jwtToken("You already have a token. Login please.")
-//                    .build();
            return ResponseEntity.status(BAD_REQUEST).body(request.getEmail() + " : user already registered");
         }
-
         var user = User.builder()
                 .firstname(request.getFirstname())
                 .lastname(request.getLastname())
@@ -46,7 +40,7 @@ public class AuthService {
 
     }
 
-    public AuthResponse login(LoginRequest request) {
+    public ResponseEntity<String> login(LoginRequest request) {
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         request.getEmail(),
@@ -56,10 +50,6 @@ public class AuthService {
                 .findByEmail(request.getEmail())
                 .orElseThrow();
         var jwtToken = jwtService.generateToken(user);
-        return AuthResponse
-                .builder()
-                .authStatus("Logged in!")
-                .jwtToken(jwtToken)
-                .build();
+        return ResponseEntity.status(OK).body("Logged in \n" + jwtToken);
     }
 }
