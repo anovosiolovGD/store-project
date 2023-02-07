@@ -8,8 +8,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-import static org.springframework.http.HttpStatus.CREATED;
-import static org.springframework.http.HttpStatus.NOT_FOUND;
+import static org.springframework.http.HttpStatus.*;
 
 @RestController
 @RequestMapping("/api/v1/auth/products")
@@ -18,23 +17,18 @@ public class ProductController {
     private final ProductService productService;
 
     @GetMapping
-    public ResponseEntity<List<Product>> getAllProducts() {
-        List<Product> products = productService.getAllProducts();
-        return ResponseEntity.ok(products);
+    public ResponseEntity<String> getAllProducts() {
+        return productService.getAllProducts();
     }
 
     @GetMapping("{id}")
     public ResponseEntity<Product> getProduct(@PathVariable Long id) {
-        if (productService.getProduct(id) == null) {
-            return ResponseEntity.status(NOT_FOUND).body(null);
-        }
-        return ResponseEntity.ok(productService.getProduct(id));
+        return productService.getProduct(id);
     }
 
     @PostMapping
     public ResponseEntity<Product> addProduct(@RequestBody Product product) {
-        Product added = productService.addProduct(product);
-        return ResponseEntity.status(CREATED).body(added);
+        return productService.addProduct(product);
     }
 
     @DeleteMapping("{id}")
