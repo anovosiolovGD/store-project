@@ -15,11 +15,8 @@ public class ProductService {
     public List<Product> getAllProducts() {
         return productRepository.findAll();
     }
-    public List<Product> getAllByIdIsLike(Long id){
-        return productRepository.findAllByIdIsLike(id);
-    }
 
-    public Product get(Long id) {
+    public Product getProduct(Long id) {
         return productRepository.getProductById(id);
     }
 
@@ -28,7 +25,7 @@ public class ProductService {
         return product;
     }
 
-    public void delete(Long id) {
+    public void deleteProduct(Long id) {
         productRepository.deleteById(id.intValue());
     }
 
