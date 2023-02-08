@@ -36,14 +36,14 @@ public class ProductService {
         return ResponseEntity.status(CREATED).body(getLastProduct());
     }
 
-     public ResponseEntity<Product> updateProduct (){
+    // TODO: 07.02.2023 implement this method and add PUT Mapping in ProductController
+    public ResponseEntity<Product> updateProduct() {
         return null;
-     }
+    }
 
     public void deleteProduct(Long id) {
         productRepository.deleteById(id);
     }
-
 
 
 }
