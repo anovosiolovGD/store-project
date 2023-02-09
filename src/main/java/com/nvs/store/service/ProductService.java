@@ -5,8 +5,15 @@ import com.nvs.store.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
+import java.math.BigDecimal;
 import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 
 import static org.springframework.http.HttpStatus.*;
 
@@ -19,9 +26,9 @@ public class ProductService {
         return productRepository.findTopByOrderByIdDesc();
     }
 
-    public ResponseEntity<String> getAllProducts() {
+    public ResponseEntity<List<Product>> getAllProducts() {
         List<Product> products = productRepository.findAll();
-        return ResponseEntity.status(OK).body("All products: \n" + products);
+        return ResponseEntity.status(OK).body(products);
     }
 
     public ResponseEntity<Product> getProduct(Long id) {
@@ -36,9 +43,18 @@ public class ProductService {
         return ResponseEntity.status(CREATED).body(getLastProduct());
     }
 
-    // TODO: 07.02.2023 implement this method and add PUT Mapping in ProductController
-    public ResponseEntity<Product> updateProduct() {
-        return null;
+    // TODO: 09.02.2023 is save correct method for UPDATing?  how to - request json without id field?
+    public ResponseEntity<Product> updateProduct(Long id,Product product){
+        Product repoProduct = productRepository.getProductById(id);
+        if(Objects.equals(repoProduct,product)){
+            return ResponseEntity.status(BAD_REQUEST).body(product);
+        }
+        repoProduct.setPrice(product.getPrice());
+        repoProduct.setTitle(product.getTitle());
+        repoProduct.setAvailable(product.getAvailable());
+        productRepository.save(repoProduct);
+
+        return ResponseEntity.status(OK).body(repoProduct);
     }
 
     public void deleteProduct(Long id) {

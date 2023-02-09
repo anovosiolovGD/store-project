@@ -27,4 +27,11 @@ public class Product {
     @NonNull
     private BigDecimal price;
 
+    public Product (String title, Integer available, BigDecimal price){
+        this.title =title;
+        this.available =available;
+        this.price = price;
+    }
+
+
 }
