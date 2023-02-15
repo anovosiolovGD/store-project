@@ -4,10 +4,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.math.BigDecimal;
 
@@ -21,8 +18,13 @@ public class Product {
 
     @Id
     @GeneratedValue
+    @NonNull
     private Long id;
+    @NonNull
     private String title;
-    private Integer avalible ;
+    @NonNull
+    private Integer available ;
+    @NonNull
     private BigDecimal price;
+
 }
