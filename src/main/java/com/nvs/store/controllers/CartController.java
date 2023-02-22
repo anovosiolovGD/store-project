@@ -11,13 +11,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/v1/auth/cart")
+@RequestMapping("/api/v1/carts")
 public class CartController {
 
     @Autowired
     private CartService cartService;
 
-    @PostMapping("add")
+    @PostMapping()
     public ResponseEntity<ApiResponse> addToCart(@RequestBody AddToCartDto addToCartDto) {
 
         cartService.addToCart(addToCartDto);
@@ -31,14 +31,14 @@ public class CartController {
         return new ResponseEntity<>(cartDto, HttpStatus.OK);
     }
 
-    @PutMapping("update/{cartItemId}")
+    @PutMapping("{cartItemId}")
     public  ResponseEntity<ApiResponse> updateCartItem (@PathVariable ("cartItemId") Long itemId,
                                                         @RequestParam Integer quantity){
         cartService.updateCart(itemId, quantity);
         return new ResponseEntity<ApiResponse>(new ApiResponse(true, "Cart item has been updated"), HttpStatus.OK);
     }
 
-    @DeleteMapping ("delete/{cartItemId}")
+    @DeleteMapping ("{cartItemId}")
     public ResponseEntity<ApiResponse> deleteCartItem(@PathVariable("cartItemId") Long itemId) {
 
         cartService.deleteCartItem(itemId);
