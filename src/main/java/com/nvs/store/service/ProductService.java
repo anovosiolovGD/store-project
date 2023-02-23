@@ -19,9 +19,9 @@ public class ProductService {
         return productRepository.findTopByOrderByIdDesc();
     }
 
-    public ResponseEntity<String> getAllProducts() {
+    public ResponseEntity<List<Product>> getAllProducts() {
         List<Product> products = productRepository.findAll();
-        return ResponseEntity.status(OK).body("All products: \n" + products);
+        return ResponseEntity.status(OK).body(products);
     }
 
     public ResponseEntity<Product> getProduct(Long id) {
@@ -36,7 +36,6 @@ public class ProductService {
         return ResponseEntity.status(CREATED).body(getLastProduct());
     }
 
-    // TODO: 07.02.2023 implement this method and add PUT Mapping in ProductController
     public ResponseEntity<Product> updateProduct() {
         return null;
     }
