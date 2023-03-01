@@ -5,7 +5,6 @@ import com.nvs.store.service.ProductService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
 
 @RestController
@@ -27,6 +26,7 @@ public class ProductController {
     @DeleteMapping("{id}")
     public void deleteProduct(@PathVariable Long id) {
         productService.deleteProduct(id);
+
     }
 
     @PostMapping

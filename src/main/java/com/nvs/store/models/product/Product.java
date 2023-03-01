@@ -26,4 +26,5 @@ public class Product {
     private Integer available ;
     @NonNull
     private BigDecimal price;
+
 }

@@ -19,6 +19,7 @@ public class ProductService {
         return productRepository.findTopByOrderByIdDesc();
     }
 
+
     public ResponseEntity<List<Product>> getAllProducts() {
         List<Product> products = productRepository.findAll();
         return ResponseEntity.status(OK).body(products);
