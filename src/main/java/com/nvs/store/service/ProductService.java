@@ -18,9 +18,6 @@ public class ProductService {
     public Product getLastProduct() {
         return productRepository.findTopByOrderByIdDesc();
     }
-    public List<Product> getAllByIdIsLike(Long id){
-        return productRepository.findAllByIdIsLike(id);
-    }
 
     public ResponseEntity<String> getAllProducts() {
         List<Product> products = productRepository.findAll();
