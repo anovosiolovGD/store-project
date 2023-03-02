@@ -5,19 +5,17 @@ import com.nvs.store.service.ProductService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
 
-import static org.springframework.http.HttpStatus.*;
 
 @RestController
-@RequestMapping("/api/v1/auth/products")
+@RequestMapping("/api/v1/products")
 @RequiredArgsConstructor
 public class ProductController {
     private final ProductService productService;
 
     @GetMapping
-    public ResponseEntity<String> getAllProducts() {
+    public ResponseEntity<List<Product>> getAllProducts() {
         return productService.getAllProducts();
     }
 
@@ -29,6 +27,10 @@ public class ProductController {
     @PostMapping
     public ResponseEntity<Product> addProduct(@RequestBody Product product) {
         return productService.addProduct(product);
+    }
+    @PutMapping("{id}")
+    public ResponseEntity<Product> updateProduct (@PathVariable Long id , @RequestBody Product product){
+        return productService.updateProduct(id, product);
     }
 
     @DeleteMapping("{id}")
