@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 import static org.springframework.http.HttpStatus.*;
 
@@ -15,34 +16,26 @@ import static org.springframework.http.HttpStatus.*;
 public class ProductService {
     private final ProductRepository productRepository;
 
-    public Product getLastProduct() {
-        return productRepository.findTopByOrderByIdDesc();
+    public List<Product> getAllProducts() {
+        return productRepository.findAll();
     }
 
-    public ResponseEntity<List<Product>> getAllProducts() {
-        List<Product> products = productRepository.findAll();
-        return ResponseEntity.status(OK).body(products);
+    public Optional<Product> getProduct(Long id) {
+        return productRepository.findById(id);
     }
 
-    public ResponseEntity<Product> getProduct(Long id) {
-        if (productRepository.getProductById(id) == null) {
-            return ResponseEntity.status(NOT_FOUND).body(null);
-        }
-        return ResponseEntity.status(OK).body(productRepository.getProductById(id));
-    }
-
-    public ResponseEntity<Product> addProduct(Product product) {
+    public Product addProduct(Product product) {
         productRepository.save(product);
-        return ResponseEntity.status(CREATED).body(getLastProduct());
+        return productRepository.getProductById(product.getId());
     }
 
-    public ResponseEntity<Product> updateProduct(Long id, Product product) {
+    public Product updateProduct(Long id, Product product) {
         Product updProduct = productRepository.getProductById(id);
         updProduct.setTitle(product.getTitle());
         updProduct.setAvailable(product.getAvailable());
         updProduct.setPrice(product.getPrice());
         productRepository.save(updProduct);
-        return ResponseEntity.status(OK).body(productRepository.getProductById(id));
+        return productRepository.getProductById(id);
     }
 
     public void deleteProduct(Long id) {
