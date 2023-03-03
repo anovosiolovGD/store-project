@@ -21,7 +21,7 @@ public class ProductController {
         return ResponseEntity.ok(productService.getAllProducts());
     }
 
-    @GetMapping("{id}")
+    @GetMapping("/{id}")
     public ResponseEntity<Product> getProduct(@PathVariable Long id) {
         if (productService.getProduct(id).isEmpty()) {
             return ResponseEntity.status(NOT_FOUND).build();
@@ -35,7 +35,7 @@ public class ProductController {
         return ResponseEntity.status(CREATED).body(productService.getProduct(product.getId()).get());
     }
 
-    @PutMapping("{id}")
+    @PutMapping("/{id}")
     public ResponseEntity<Product> updateProduct(@PathVariable Long id, @RequestBody Product product) {
         if (productService.getProduct(id).isEmpty()) {
             return ResponseEntity.status(NOT_FOUND).build();
@@ -43,7 +43,7 @@ public class ProductController {
         return ResponseEntity.ok(productService.updateProduct(id, product));
     }
 
-    @DeleteMapping("{id}")
+    @DeleteMapping("/{id}")
     public ResponseEntity<Product> deleteProduct(@PathVariable Long id) {
         if (productService.getProduct(id).isEmpty()) {
             return ResponseEntity.status(NOT_FOUND).build();
