@@ -5,34 +5,50 @@ import com.nvs.store.service.ProductService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
+import static org.springframework.http.HttpStatus.CREATED;
+import static org.springframework.http.HttpStatus.NOT_FOUND;
 
-import static org.springframework.http.HttpStatus.*;
 
 @RestController
-@RequestMapping("/api/v1/auth/products")
+@RequestMapping("/api/v1/products")
 @RequiredArgsConstructor
 public class ProductController {
     private final ProductService productService;
 
     @GetMapping
-    public ResponseEntity<String> getAllProducts() {
-        return productService.getAllProducts();
+    public ResponseEntity<List<Product>> getAllProducts() {
+        return ResponseEntity.ok(productService.getAllProducts());
     }
 
-    @GetMapping("{id}")
+    @GetMapping("/{id}")
     public ResponseEntity<Product> getProduct(@PathVariable Long id) {
-        return productService.getProduct(id);
+        if (productService.getProduct(id).isEmpty()) {
+            return ResponseEntity.status(NOT_FOUND).build();
+        }
+        return ResponseEntity.ok(productService.getProduct(id).get());
     }
 
     @PostMapping
     public ResponseEntity<Product> addProduct(@RequestBody Product product) {
-        return productService.addProduct(product);
+        productService.addProduct(product);
+        return ResponseEntity.status(CREATED).body(productService.getProduct(product.getId()).get());
     }
 
-    @DeleteMapping("{id}")
-    public void deleteProduct(@PathVariable Long id) {
+    @PutMapping("/{id}")
+    public ResponseEntity<Product> updateProduct(@PathVariable Long id, @RequestBody Product product) {
+        if (productService.getProduct(id).isEmpty()) {
+            return ResponseEntity.status(NOT_FOUND).build();
+        }
+        return ResponseEntity.ok(productService.updateProduct(id, product));
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Product> deleteProduct(@PathVariable Long id) {
+        if (productService.getProduct(id).isEmpty()) {
+            return ResponseEntity.status(NOT_FOUND).build();
+        }
         productService.deleteProduct(id);
+        return ResponseEntity.ok().build();
     }
 }
