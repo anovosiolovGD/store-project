@@ -1,27 +1,23 @@
 package com.nvs.store.models.cart;
 
-import com.nvs.store.models.product.Product;
+import com.nvs.store.dto.cart.CartItem;
 import jakarta.persistence.*;
 
+import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 
 @Entity
 @Table(name = "carts")
 public class Cart {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-
-    @Column(name = "created_date")
     private Date createdDate;
 
-    @ManyToOne
-    @JoinColumn(name = "product_id")
-    private Product product;
-
-    private int quantity;
-
+    @OneToMany
+    private List<CartItem> cartItems;
+    private BigDecimal totalCost;
 
     public Cart() {
     }
@@ -42,20 +38,21 @@ public class Cart {
         this.createdDate = createdDate;
     }
 
-    public Product getProduct() {
-        return product;
+    public List<CartItem> getCartItems() {
+        return cartItems;
     }
 
-    public void setProduct(Product product) {
-        this.product = product;
+    public void setCartItems(List<CartItem> cartItems) {
+        this.cartItems = cartItems;
     }
 
-    public int getQuantity() {
-        return quantity;
+    public BigDecimal getTotalCost() {
+        return totalCost;
     }
 
-    public void setQuantity(int quantity) {
-        this.quantity = quantity;
+    public void setTotalCost(BigDecimal totalCost) {
+        this.totalCost = totalCost;
     }
 }
+
 

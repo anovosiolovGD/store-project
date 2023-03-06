@@ -1,49 +1,34 @@
 package com.nvs.store.controllers;
 
-
-import com.nvs.store.common.ApiResponse;
-import com.nvs.store.dto.cart.AddToCartDto;
 import com.nvs.store.dto.cart.CartDto;
+import com.nvs.store.dto.cart.ProductDto;
 import com.nvs.store.service.CartService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import static org.springframework.http.HttpStatus.CREATED;
 
 @RestController
-@RequestMapping("/api/v1/carts")
+@RequestMapping("/api/v1/auth/carts")
 public class CartController {
-
     @Autowired
     private CartService cartService;
 
     @PostMapping()
-    public ResponseEntity<ApiResponse> addToCart(@RequestBody AddToCartDto addToCartDto) {
-
-        cartService.addToCart(addToCartDto);
-
-        return new ResponseEntity<>(new ApiResponse(true, "Added to cart"), HttpStatus.CREATED);
+    public ResponseEntity<CartDto> addToCart(@RequestBody ProductDto productDto) {
+        return ResponseEntity.status(CREATED).body(cartService.addToCart(productDto));
     }
 
     @GetMapping
-    public ResponseEntity<CartDto> getCartItems() {
-        CartDto cartDto = cartService.listCartItems();
-        return new ResponseEntity<>(cartDto, HttpStatus.OK);
+    public ResponseEntity<CartDto> getAllCartItems() {
+        return ResponseEntity.ok(cartService.getAllCart());
     }
-
-    @PutMapping("{cartItemId}")
-    public  ResponseEntity<ApiResponse> updateCartItem (@PathVariable ("cartItemId") Long itemId,
-                                                        @RequestParam Integer quantity){
-        cartService.updateCart(itemId, quantity);
-        return new ResponseEntity<ApiResponse>(new ApiResponse(true, "Cart item has been updated"), HttpStatus.OK);
+    @PutMapping("/{itemId}")
+    public ResponseEntity<CartDto> updateCartItem(@PathVariable ("itemId")Long itemId, @RequestParam Integer quantity) {
+        return ResponseEntity.ok(cartService.updateCartItems(itemId, quantity));
     }
-
-    @DeleteMapping ("{cartItemId}")
-    public ResponseEntity<ApiResponse> deleteCartItem(@PathVariable("cartItemId") Long itemId) {
-
-        cartService.deleteCartItem(itemId);
-
-        return new ResponseEntity<>(new ApiResponse(true, "Item has been removed"), HttpStatus.OK);
-
+    @DeleteMapping("/{productId}")
+    public ResponseEntity<CartDto> deleteCartItem(@PathVariable Long productId) {
+        return ResponseEntity.ok(cartService.deleteCartItem(productId));
     }
 }

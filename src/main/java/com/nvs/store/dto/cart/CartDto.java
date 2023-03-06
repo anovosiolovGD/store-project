@@ -4,17 +4,17 @@ import java.math.BigDecimal;
 import java.util.List;
 
 public class CartDto {
-    private List<CartItemDto> cartItems;
+    private List<CartItem> cartItems;
     private BigDecimal totalCost;
 
     public CartDto() {
     }
 
-    public List<CartItemDto> getCartItems() {
+    public List<CartItem> getCartItems() {
         return cartItems;
     }
 
-    public void setCartItems(List<CartItemDto> cartItems) {
+    public void setCartItems(List<CartItem> cartItems) {
         this.cartItems = cartItems;
     }
 

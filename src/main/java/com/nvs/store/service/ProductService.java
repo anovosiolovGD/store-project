@@ -1,5 +1,6 @@
 package com.nvs.store.service;
 
+import com.nvs.store.exceptions.ProductNotExistsException;
 import com.nvs.store.models.product.Product;
 import com.nvs.store.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
@@ -7,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 import static org.springframework.http.HttpStatus.*;
 
@@ -34,6 +36,14 @@ public class ProductService {
     public ResponseEntity<Product> addProduct(Product product) {
         productRepository.save(product);
         return ResponseEntity.status(CREATED).body(getLastProduct());
+    }
+
+    public Product findById(Long productId) throws ProductNotExistsException {
+        Optional<Product> optionalProduct = productRepository.findById(productId);
+        if (optionalProduct.isEmpty()) {
+            throw new ProductNotExistsException("product id is invalid: " + productId);
+        }
+        return optionalProduct.get();
     }
 
     // TODO: 07.02.2023 implement this method and add PUT Mapping in ProductController
