@@ -12,7 +12,7 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.util.List;
-import java.util.Optional;
+
 
 
 @Service
@@ -52,11 +52,8 @@ public class CartService {
     }
 
     public CartDto updateCartItems(Long itemId, Integer quantity) {
-        Optional<CartItem> optionalCart = cartItemRepository.findById(itemId);
-        if (optionalCart.isEmpty()) {
-            throw new CustomException("Invalid item id");
-        }
-        CartItem cartItem = optionalCart.get();
+        CartItem cartItem = cartItemRepository.findById(itemId)
+                .orElseThrow(() -> new CustomException("cart item id is invalid: " + itemId));
         Product product = productService.findById(cartItem.getProductId());
         if (quantity > product.getAvailable()) {
             throw new CustomException("We don't have enough available quantity of this product. We have only:" + product.getAvailable());
@@ -67,10 +64,9 @@ public class CartService {
     }
 
     public CartDto deleteCartItem(Long itemId) {
-        if (productRepository.findById(itemId).isEmpty()) {
-            throw new CustomException("cart item id is invalid: " + itemId);
-        }
-        cartItemRepository.deleteById(itemId);
+        CartItem cartItem = cartItemRepository.findById(itemId)
+                .orElseThrow(() -> new CustomException("cart item id is invalid: " + itemId));
+        cartItemRepository.deleteById(cartItem.getCartItemId());
         return getAllCart();
     }
 }
