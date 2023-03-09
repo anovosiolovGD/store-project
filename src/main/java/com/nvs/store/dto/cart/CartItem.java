@@ -5,49 +5,23 @@ import jakarta.persistence.*;
 @Entity
 @Table(name = "cart_items")
 public class CartItem {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long cartItemId;
 
-    private Long productId;
-
-    private String productTitle;
+    @EmbeddedId
+    private CartItemId id;
 
     private int quantity;
 
-    public CartItem(Long cartItemId, Long productId, String productTitle, int quantity) {
-        this.cartItemId = cartItemId;
-        this.productId = productId;
-        this.productTitle = productTitle;
-        this.quantity = quantity;
-    }
 
     public CartItem() {
 
     }
 
-    public Long getCartItemId() {
-        return cartItemId;
+    public CartItem(Long cartId, Long productId, int quantity) {
+        this.id = new CartItemId(cartId,productId);
+        this.quantity = quantity;
     }
-
-    public void setCartItemId(Long cartId) {
-        this.cartItemId = cartId;
-    }
-
-    public Long getProductId() {
-        return productId;
-    }
-
-    public void setProductId(Long productId) {
-        this.productId = productId;
-    }
-
-    public String getProductTitle() {
-        return productTitle;
-    }
-
-    public void setProductTitle(String productTitle) {
-        this.productTitle = productTitle;
+    public Long getProductId(){
+        return id.getProductId();
     }
 
     public int getQuantity() {

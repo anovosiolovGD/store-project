@@ -3,36 +3,32 @@ package com.nvs.store.service;
 import com.nvs.store.dto.cart.CartDto;
 import com.nvs.store.dto.cart.CartItem;
 import com.nvs.store.dto.cart.ProductDto;
-import com.nvs.store.exceptions.CustomException;
+import com.nvs.store.exceptions.InvalidCartItemException;
+import com.nvs.store.exceptions.NotAvailableException;
 import com.nvs.store.models.product.Product;
 import com.nvs.store.repository.CartItemRepository;
-import com.nvs.store.repository.ProductRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.util.List;
 
-
-
 @Service
+@RequiredArgsConstructor()
 public class CartService {
-    @Autowired
-    ProductService productService;
-    @Autowired
-    ProductRepository productRepository;
-    @Autowired
-    CartItemRepository cartItemRepository;
+
+    private final ProductService productService;
+
+    private final CartItemRepository cartItemRepository;
+
 
     public CartDto addToCart(ProductDto productDto) {
         Product product = productService.findById(productDto.getProductId());
         if (productDto.getQuantity() > product.getAvailable()) {
-            throw new CustomException("We don't have enough available quantity of this product. We have only:" + product.getAvailable());
+            throw new NotAvailableException("We don't have enough available quantity of this product. We have only:" + product.getAvailable());
         }
         CartItem cartItem = new CartItem();
-        cartItem.setProductId(product.getId());
         cartItem.setQuantity(productDto.getQuantity());
-        cartItem.setProductTitle(product.getTitle());
 
         cartItemRepository.save(cartItem);
         return getAllCart();
@@ -51,22 +47,22 @@ public class CartService {
         return cartDto;
     }
 
-    public CartDto updateCartItems(Long itemId, Integer quantity) {
-        CartItem cartItem = cartItemRepository.findById(itemId)
-                .orElseThrow(() -> new CustomException("cart item id is invalid: " + itemId));
+    public CartDto updateCartItems(Long productId, Integer quantity) {
+        CartItem cartItem = cartItemRepository.findById(productId)
+                .orElseThrow(() -> new InvalidCartItemException("cart item id is invalid: " + productId));
         Product product = productService.findById(cartItem.getProductId());
         if (quantity > product.getAvailable()) {
-            throw new CustomException("We don't have enough available quantity of this product. We have only:" + product.getAvailable());
+            throw new InvalidCartItemException("We don't have enough available quantity of this product. We have only:" + product.getAvailable());
         }
         cartItem.setQuantity(quantity);
         cartItemRepository.save(cartItem);
         return getAllCart();
     }
 
-    public CartDto deleteCartItem(Long itemId) {
-        CartItem cartItem = cartItemRepository.findById(itemId)
-                .orElseThrow(() -> new CustomException("cart item id is invalid: " + itemId));
-        cartItemRepository.deleteById(cartItem.getCartItemId());
+    public CartDto deleteCartItem(Long productId) {
+        CartItem cartItem = cartItemRepository.findById(productId)
+                .orElseThrow(() -> new InvalidCartItemException("cart item id is invalid: " + productId));
+        cartItemRepository.deleteById(cartItem.getProductId());
         return getAllCart();
     }
 }

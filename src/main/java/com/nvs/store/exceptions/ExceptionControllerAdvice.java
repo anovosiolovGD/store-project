@@ -9,12 +9,16 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @RestControllerAdvice
 public class ExceptionControllerAdvice {
 
-    @ExceptionHandler(value = CustomException.class)
-    public final ResponseEntity<String> handleCustomException(CustomException exception) {
+    @ExceptionHandler(value = InvalidCartItemException.class)
+    public final ResponseEntity<String> handleCustomException(InvalidCartItemException exception) {
         return new ResponseEntity<>(exception.getMessage(), HttpStatus.BAD_REQUEST);
     }
     @ExceptionHandler(value = ProductNotExistsException.class)
     public final ResponseEntity<String> handleProductNotExistsException(ProductNotExistsException exception) {
+        return new ResponseEntity<>(exception.getMessage(), HttpStatus.BAD_REQUEST);
+    }
+    @ExceptionHandler(value = NotAvailableException.class)
+    public final ResponseEntity<String> handleProductNotExistsException(NotAvailableException exception) {
         return new ResponseEntity<>(exception.getMessage(), HttpStatus.BAD_REQUEST);
     }
 }

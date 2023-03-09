@@ -3,32 +3,35 @@ package com.nvs.store.controllers;
 import com.nvs.store.dto.cart.CartDto;
 import com.nvs.store.dto.cart.ProductDto;
 import com.nvs.store.service.CartService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
+import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
-import static org.springframework.http.HttpStatus.CREATED;
+import org.springframework.http.HttpStatus;
+
 
 @RestController
-@RequestMapping("/api/v1/auth/carts")
+@RequiredArgsConstructor
+@RequestMapping("/api/v1/carts")
 public class CartController {
-    @Autowired
-    private CartService cartService;
+
+    private final CartService cartService;
+
 
     @PostMapping()
-    public ResponseEntity<CartDto> addToCart(@RequestBody ProductDto productDto) {
-        return ResponseEntity.status(CREATED).body(cartService.addToCart(productDto));
+    @ResponseStatus(value = HttpStatus.CREATED)
+    public CartDto addToCart(@RequestBody ProductDto productDto) {
+        return cartService.addToCart(productDto);
     }
 
     @GetMapping
-    public ResponseEntity<CartDto> getAllCartItems() {
-        return ResponseEntity.ok(cartService.getAllCart());
+    public CartDto getAllCartItems() {
+        return cartService.getAllCart();
     }
-    @PutMapping("/{itemId}")
-    public ResponseEntity<CartDto> updateCartItem(@PathVariable ("itemId")Long itemId, @RequestParam Integer quantity) {
-        return ResponseEntity.ok(cartService.updateCartItems(itemId, quantity));
+    @PutMapping("/{productId}")
+    public CartDto updateCartItem(@PathVariable ("productId")Long productId, @RequestParam Integer quantity) {
+        return cartService.updateCartItems(productId, quantity);
     }
     @DeleteMapping("/{productId}")
-    public ResponseEntity<CartDto> deleteCartItem(@PathVariable Long productId) {
-        return ResponseEntity.ok(cartService.deleteCartItem(productId));
+    public CartDto deleteCartItem(@PathVariable Long productId) {
+        return cartService.deleteCartItem(productId);
     }
 }
