@@ -1,5 +1,6 @@
 package com.nvs.store.service;
 
+import com.nvs.store.exceptions.ProductNotExistsException;
 import com.nvs.store.models.product.Product;
 import com.nvs.store.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
@@ -41,6 +42,10 @@ public class ProductService {
     public void deleteProduct(Long id) {
         productRepository.deleteById(id);
     }
-
+    public Product findById(Long productId) throws ProductNotExistsException {
+        Product product = productRepository.findById(productId)
+                .orElseThrow(() -> new ProductNotExistsException("product id is invalid: " + productId));
+        return product;
+    }
 
 }
