@@ -3,13 +3,11 @@ package com.nvs.store.service;
 import com.nvs.store.models.product.Product;
 import com.nvs.store.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
 
-import static org.springframework.http.HttpStatus.*;
 
 @Service
 @RequiredArgsConstructor
@@ -25,8 +23,7 @@ public class ProductService {
     }
 
     public Product addProduct(Product product) {
-        productRepository.save(product);
-        return productRepository.getProductById(product.getId());
+        return productRepository.save(product);
     }
 
     public Product updateProduct(Long id, Product product) {
