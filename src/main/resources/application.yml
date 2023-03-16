@@ -15,7 +15,8 @@ spring:
     database: mysql
     database-platform: org.hibernate.dialect.MySQLDialect
     open-in-view: false
-
-
+logging:
+  level:
+    root: debug
 
 

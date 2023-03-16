@@ -1,13 +1,15 @@
 package com.nvs.store.controllers;
 
+import com.nvs.store.dto.ProductDTO;
 import com.nvs.store.models.product.Product;
 import com.nvs.store.service.ProductService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
 import java.util.List;
-import static org.springframework.http.HttpStatus.CREATED;
-import static org.springframework.http.HttpStatus.NOT_FOUND;
+
+import static org.springframework.http.HttpStatus.*;
 
 
 @RestController
@@ -29,18 +31,20 @@ public class ProductController {
         return ResponseEntity.ok(productService.getProduct(id).get());
     }
 
+
     @PostMapping
-    public ResponseEntity<Product> addProduct(@RequestBody Product product) {
-        productService.addProduct(product);
-        return ResponseEntity.status(CREATED).body(productService.getProduct(product.getId()).get());
+    @ResponseStatus(CREATED)
+    public Product addProduct(@RequestBody ProductDTO product) {
+        return productService.addProduct(product);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Product> updateProduct(@PathVariable Long id, @RequestBody Product product) {
+    @ResponseStatus(OK)
+    public Product updateProduct(@PathVariable Long id, @RequestBody Product product) {
         if (productService.getProduct(id).isEmpty()) {
-            return ResponseEntity.status(NOT_FOUND).build();
+            throw new IllegalArgumentException("Invalid id");
         }
-        return ResponseEntity.ok(productService.updateProduct(id, product));
+        return productService.updateProduct(id, product);
     }
 
     @DeleteMapping("/{id}")
