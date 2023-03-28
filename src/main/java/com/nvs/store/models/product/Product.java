@@ -23,7 +23,7 @@ public class Product {
     @NonNull
     private String title;
     @NonNull
-    private Integer available ;
+    private Integer available;
     @NonNull
     private BigDecimal price;
 
