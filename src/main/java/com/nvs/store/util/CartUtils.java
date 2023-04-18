@@ -6,6 +6,8 @@ import com.nvs.store.models.cart.Cart;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
+import java.util.List;
 import java.util.function.Function;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
@@ -18,13 +20,25 @@ public class CartUtils {
                             .stream()
                             .map(cartItem -> CartItemResponse
                                     .builder()
+                                    .id(cartItem.getId())
+                                    .productId(cartItem.getProduct().getId())
                                     .title(cartItem.getProduct().getTitle())
-                                    .id(cartItem.getProduct().getId())
                                     .price(cartItem.getProduct().getPrice())
                                     .quantity(cartItem.getQuantity())
                                     .build())
                             .toList()
                     )
                     .build();
+
+    public static BigDecimal calculateTotalPrice(List<CartItemResponse> cartItemResponses) {
+        return cartItemResponses.stream()
+                .map(CartItemResponse::getSubtotal)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+    }
+
+    public static BigDecimal calculateSubtotal(BigDecimal price, int quantity) {
+        return price.multiply(BigDecimal.valueOf(quantity));
+    }
 
 }

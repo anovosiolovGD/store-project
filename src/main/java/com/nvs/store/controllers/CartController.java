@@ -2,50 +2,53 @@ package com.nvs.store.controllers;
 
 import com.nvs.store.dto.CartDTO;
 import com.nvs.store.dto.CartItemRequest;
+import com.nvs.store.models.cart.CartItem;
 import com.nvs.store.service.CartService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+
+import static org.springframework.http.HttpStatus.CREATED;
 
 @RestController
 @RequestMapping("api/v1/carts")
 @RequiredArgsConstructor
 public class CartController {
+
     private final CartService cartService;
 
     @GetMapping
-    public ResponseEntity<CartDTO> getActualCart() {
-        return ResponseEntity.ok(cartService.findActualCartByEmail());
+    public CartDTO getActualCart() {
+        return cartService.findActualCartByEmail();
+
     }
 
     @GetMapping("/all")
-    public ResponseEntity<List<CartDTO>> getAllCarts() {
-        return ResponseEntity.ok(cartService.getAllCarts());
+    public List<CartDTO> getAllCarts() {
+        return cartService.getAllCarts();
     }
 
 
     @PostMapping
-    public ResponseEntity<CartDTO> addProductToCart(@RequestBody CartItemRequest cartItemRequest) {
-        return ResponseEntity.ok(cartService.addProductToCart(cartItemRequest));
+    @ResponseStatus(CREATED)
+    public CartItem addProductToCart(@RequestBody CartItemRequest cartItemRequest) {
+        return cartService.addProductToCart(cartItemRequest);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<CartDTO> updateProductQuantity(@PathVariable Long id, @RequestParam Integer quantity) {
-        return ResponseEntity.ok(cartService.updateProduct(id, quantity));
+    public CartItem updateProductQuantity(@PathVariable(name = "id") Long cartItemId, @RequestParam Integer quantity) {
+        return cartService.updateProduct(cartItemId, quantity);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity deleteProductFromCart(@PathVariable Long id) {
-        cartService.deleteProduct(id);
-        return ResponseEntity.status(HttpStatus.OK).build();
+    public void deleteCartItem(@PathVariable Long id) {
+        cartService.deleteCartItem(id);
     }
 
     @PostMapping("/order")
-    public ResponseEntity<CartDTO> orderCart() {
-        return ResponseEntity.ok(cartService.orderCart());
+    public CartDTO orderCart() {
+        return cartService.orderCart();
     }
 
 

@@ -15,12 +15,14 @@ public class CartItem {
     @Id
     @GeneratedValue
     private Long id;
+
     @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "cart_id")
     @ToString.Exclude
     private Cart cart;
-    @OneToOne
+
+    @ManyToOne
     @JoinColumn(name = "product_id", referencedColumnName = "id")
     private Product product;
     private Integer quantity;

@@ -1,6 +1,7 @@
 package com.nvs.store.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.nvs.store.util.CartUtils;
 import lombok.Builder;
 
 import java.math.BigDecimal;
@@ -10,12 +11,16 @@ import java.util.Objects;
 
 @Builder
 public final class CartDTO {
+
     @JsonProperty("id")
     private final Long id;
+
     @JsonProperty("actual")
     private final Boolean actual;
+
     @JsonProperty("cartItems")
     private final List<CartItemResponse> cartItemResponses;
+
     @JsonProperty("totalPrice")
     private final BigDecimal totalPrice;
 
@@ -27,30 +32,21 @@ public final class CartDTO {
         this.id = id;
         this.actual = actual;
         this.cartItemResponses = cartItemResponses;
-        this.totalPrice = calculateTotalPrice();
+        this.totalPrice = CartUtils.calculateTotalPrice(cartItemResponses);
     }
 
     public Long getId() {
         return id;
     }
 
-    private BigDecimal calculateTotalPrice() {
-        BigDecimal totalPrice = BigDecimal.ZERO;
-        for (CartItemResponse cartItemResponse : cartItemResponses) {
-            totalPrice = totalPrice.add(cartItemResponse.getSubtotal());
-        }
-        return totalPrice;
-    }
-
     @Override
     public boolean equals(Object obj) {
-        if (obj == this) return true;
-        if (obj == null || obj.getClass() != this.getClass()) return false;
-        var that = (CartDTO) obj;
-        return Objects.equals(this.id, that.id) &&
-                Objects.equals(this.actual, that.actual) &&
-                Objects.equals(this.cartItemResponses, that.cartItemResponses) &&
-                Objects.equals(this.totalPrice, that.totalPrice);
+        if (this == obj) return true;
+        if (!(obj instanceof CartDTO cartDTO)) return false;
+        return Objects.equals(id, cartDTO.id) &&
+                Objects.equals(actual, cartDTO.actual) &&
+                Objects.equals(cartItemResponses, cartDTO.cartItemResponses) &&
+                Objects.equals(totalPrice, cartDTO.totalPrice);
     }
 
     @Override
