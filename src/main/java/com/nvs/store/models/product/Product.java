@@ -10,7 +10,7 @@ import java.math.BigDecimal;
 
 @Data
 @Builder
-@NoArgsConstructor
+@NoArgsConstructor(force = true)
 @AllArgsConstructor
 @Entity
 @Table(name = "products")
