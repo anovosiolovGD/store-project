@@ -146,9 +146,7 @@ public class CartService {
 
     @Transactional
     public void deleteCartItem(Long id) {
-        if (cartItemRepository.findById(id).isPresent()) {
-            cartItemRepository.deleteById(id);
-        }
+        cartItemRepository.findById(id).ifPresent(cartItem -> cartItemRepository.deleteById(id));
     }
 
     private void validateAvailableProductQuantities(Product product, Integer quantity) {

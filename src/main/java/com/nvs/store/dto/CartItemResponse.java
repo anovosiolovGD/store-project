@@ -32,7 +32,9 @@ public class CartItemResponse {
         return subtotal;
     }
 
-    public CartItemResponse(Long id, Long productId, String title, BigDecimal price, Integer quantity) {
+
+    public CartItemResponse(Long id, Long productId, String title, BigDecimal price, Integer quantity, BigDecimal subtotal) {
+
         this.id = id;
         this.productId = productId;
         this.title = title;

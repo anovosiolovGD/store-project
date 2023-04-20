@@ -6,8 +6,6 @@ import lombok.Builder;
 
 import java.math.BigDecimal;
 import java.util.List;
-import java.util.Objects;
-
 
 @Builder
 public final class CartDTO {
@@ -27,7 +25,8 @@ public final class CartDTO {
     public CartDTO(
             Long id,
             Boolean actual,
-            List<CartItemResponse> cartItemResponses
+            List<CartItemResponse> cartItemResponses,
+            BigDecimal totalPrice
     ) {
         this.id = id;
         this.actual = actual;
@@ -39,22 +38,6 @@ public final class CartDTO {
         return id;
     }
 
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) return true;
-        if (!(obj instanceof CartDTO cartDTO)) return false;
-        return Objects.equals(id, cartDTO.id) &&
-                Objects.equals(actual, cartDTO.actual) &&
-                Objects.equals(cartItemResponses, cartDTO.cartItemResponses) &&
-                Objects.equals(totalPrice, cartDTO.totalPrice);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id, actual, cartItemResponses, totalPrice);
-    }
-
-    @Override
     public String toString() {
         return "CartDTO[" +
                 "id=" + id + ", " +
@@ -62,5 +45,5 @@ public final class CartDTO {
                 "cartItems=" + cartItemResponses + ", " +
                 "totalPrice=" + totalPrice + ']';
     }
-
+    
 }

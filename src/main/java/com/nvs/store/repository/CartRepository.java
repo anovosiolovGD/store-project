@@ -11,10 +11,10 @@ import java.util.Optional;
 
 @Repository
 public interface CartRepository extends JpaRepository<Cart, Long> {
+
     @Query(value = "select c from Cart c join c.user u where u.email = :email and c.actual = true")
-    Optional<Cart> findByUserEmailAndActualTrue(@Param("email")String email);
+    Optional<Cart> findByUserEmailAndActualTrue(@Param("email") String email);
 
     List<Cart> findByUserEmail(String email);
-
 
 }
