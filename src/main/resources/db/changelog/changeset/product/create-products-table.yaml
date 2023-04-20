@@ -43,3 +43,4 @@ databaseChangeLog:
               - column:
                   name: next_val
                   value: 100
+

@@ -7,7 +7,6 @@ import lombok.Builder;
 import java.math.BigDecimal;
 import java.util.List;
 
-
 @Builder
 public final class CartDTO {
 
@@ -39,7 +38,6 @@ public final class CartDTO {
         return id;
     }
 
-    @Override
     public String toString() {
         return "CartDTO[" +
                 "id=" + id + ", " +
@@ -47,5 +45,5 @@ public final class CartDTO {
                 "cartItems=" + cartItemResponses + ", " +
                 "totalPrice=" + totalPrice + ']';
     }
-
+    
 }
