@@ -1,6 +1,8 @@
 package com.nvs.store.service;
 
 import com.nvs.store.dto.*;
+import com.nvs.store.exceptions.ProductNotExistsException;
+import com.nvs.store.exceptions.UserNotFoundException;
 import com.nvs.store.models.cart.Cart;
 import com.nvs.store.models.cart.CartItem;
 import com.nvs.store.models.product.Product;
@@ -22,12 +24,11 @@ public class CartService {
     private final UserRepository userRepository;
     private final ProductRepository productRepository;
 
-    public CartDTO findActualCartByEmail() {
+    public CartDTO findActualCartByEmail() throws UserNotFoundException{
         String userEmail = UserUtils.getUserEmailFromContext();
         User user = userRepository
                 .findByEmail(userEmail)
-                .orElseThrow(() -> new RuntimeException(
-                        String.format("User with email [%s] not found", userEmail))
+                .orElseThrow(() -> new UserNotFoundException(userEmail)
                 );
         Cart cart = cartRepository
                 .findByUserEmailAndActualTrue(userEmail)
@@ -56,19 +57,36 @@ public class CartService {
                 .toList();
     }
 
-    public CartItem addProductToCart(CartItemRequest cartItemRequest) {
+    public CartItem addProductToCart(CartItemRequest cartItemRequest) throws UserNotFoundException,ProductNotExistsException{
         String userEmail = UserUtils.getUserEmailFromContext();
+        User user = userRepository
+                .findByEmail(userEmail)
+                .orElseThrow(() -> new UserNotFoundException(userEmail)
+                );
         Product product = productRepository
                 .findById(cartItemRequest
                         .getProductId())
                 .orElseThrow(() ->
-                        new RuntimeException(
-                                String.format("Product with id [%d] does not exist", cartItemRequest.getProductId()))
+                        new ProductNotExistsException(cartItemRequest.getProductId())
                 );
         Cart actualCart = cartRepository
-                .findByUserEmailAndActualTrue(userEmail).orElseThrow();
-
+                .findByUserEmailAndActualTrue(userEmail)
+                .orElse(
+                        Cart.builder()
+                                .user(user)
+                                .actual(true)
+                                .build()
+                );
         List<CartItem> cartItems = actualCart.getCartItems();
+        if (cartItems == null) {
+            var cartItem = CartItem.builder()
+                    .cart(actualCart)
+                    .product(product)
+                    .quantity(cartItemRequest.getQuantity())
+                    .build();
+            cartRepository.save(actualCart);
+            return cartItemRepository.save(cartItem);
+        }
         for (CartItem cartItem : cartItems) {
             if (cartItem.getProduct().getId().equals(product.getId())) {
                 int newQuantity = cartItem.getQuantity() + cartItemRequest.getQuantity();
@@ -77,7 +95,6 @@ public class CartService {
                 return cartItemRepository.save(cartItem);
             }
         }
-
         validateAvailableProductQuantities(product, cartItemRequest.getQuantity());
         CartItem newCartItem = CartItem
                 .builder()
@@ -91,7 +108,7 @@ public class CartService {
         return newCartItem;
     }
 
-    public CartItem updateProduct(Long cartItemId, Integer quantity) {
+    public CartItem updateProduct(Long cartItemId, Integer quantity) throws UserNotFoundException {
         CartItem cartItem = cartItemRepository.findById(cartItemId)
                 .orElseThrow(() -> new RuntimeException("No such cart item in cart"));
 
@@ -103,10 +120,8 @@ public class CartService {
     public CartDTO orderCart() {
         String userEmail = UserUtils.getUserEmailFromContext();
         User user = userRepository.findByEmail(userEmail).orElseThrow(
-                () -> new RuntimeException(
-                        String.format("User with username %s not found", userEmail))
+                () -> new UserNotFoundException(userEmail)
         );
-
         Cart cart = cartRepository
                 .findByUserEmailAndActualTrue(userEmail).orElseThrow();
 
@@ -149,10 +164,9 @@ public class CartService {
         cartItemRepository.findById(id).ifPresent(cartItem -> cartItemRepository.deleteById(id));
     }
 
-    private void validateAvailableProductQuantities(Product product, Integer quantity) {
+    private void validateAvailableProductQuantities(Product product, Integer quantity) throws ProductNotExistsException{
         if (product.getAvailable() < 1) {
-            throw new RuntimeException(
-                    String.format("Sorry, [%s] is not available yet", product.getTitle())
+            throw new ProductNotExistsException(product.getId()
             );
         } else if (quantity > product.getAvailable()) {
             throw new RuntimeException(

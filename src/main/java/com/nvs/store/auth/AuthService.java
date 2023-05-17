@@ -4,6 +4,7 @@ import com.nvs.store.config.JwtService;
 import com.nvs.store.models.user.Role;
 import com.nvs.store.models.user.User;
 import com.nvs.store.repository.UserRepository;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -21,9 +22,9 @@ public class AuthService {
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
 
-    public ResponseEntity<String> register(RegisterRequest request) {
+    public ResponseEntity<String> register(@Valid RegisterRequest request) {
         if (userRepository.findByEmail(request.getEmail()).isPresent()) {
-           return ResponseEntity.status(BAD_REQUEST).body(request.getEmail() + " : user already registered");
+            return ResponseEntity.status(BAD_REQUEST).body(request.getEmail() + " : user already registered");
         }
         var user = User.builder()
                 .firstname(request.getFirstname())
@@ -37,7 +38,6 @@ public class AuthService {
         var jwtToken = jwtService.generateToken(user);
 
         return ResponseEntity.status(CREATED).body(jwtToken);
-
     }
 
     public ResponseEntity<String> login(LoginRequest request) {

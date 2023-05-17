@@ -1,5 +1,6 @@
 package com.nvs.store.service;
 
+import com.nvs.store.exceptions.ProductNotExistsException;
 import com.nvs.store.models.product.Product;
 import com.nvs.store.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
@@ -27,12 +28,13 @@ public class ProductService {
     }
 
     public Product updateProduct(Long id, Product product) {
-        Product updProduct = productRepository.getProductById(id);
+        Product updProduct = productRepository.findById(id)
+                .orElseThrow(() -> new ProductNotExistsException(id));
         updProduct.setTitle(product.getTitle());
         updProduct.setAvailable(product.getAvailable());
         updProduct.setPrice(product.getPrice());
         productRepository.save(updProduct);
-        return productRepository.getProductById(id);
+        return updProduct;
     }
 
     public void deleteProduct(Long id) {

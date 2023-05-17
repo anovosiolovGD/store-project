@@ -4,6 +4,9 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
+
 import lombok.*;
 
 import java.math.BigDecimal;
@@ -18,13 +21,12 @@ public class Product {
 
     @Id
     @GeneratedValue
-    @NonNull
     private Long id;
-    @NonNull
+    @NotBlank(message = "Title is mandatory")
     private String title;
-    @NonNull
+    @Min(value = 0, message = "This value should be positive")
     private Integer available;
-    @NonNull
+    @Min(value = 1, message = "This value should be positive and greater than 0")
     private BigDecimal price;
 
 }
