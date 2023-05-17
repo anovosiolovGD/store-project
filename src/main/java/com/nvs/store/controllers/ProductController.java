@@ -1,7 +1,9 @@
 package com.nvs.store.controllers;
 
+import com.nvs.store.exceptions.ProductNotExistsException;
 import com.nvs.store.models.product.Product;
 import com.nvs.store.service.ProductService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -23,9 +25,9 @@ public class ProductController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Product> getProduct(@PathVariable Long id) {
+    public ResponseEntity<Product> getProduct(@PathVariable Long id) throws ProductNotExistsException {
         if (productService.getProduct(id).isEmpty()) {
-            return ResponseEntity.status(NOT_FOUND).build();
+            throw new ProductNotExistsException(id);
         }
         return ResponseEntity.ok(productService.getProduct(id).get());
     }
@@ -33,25 +35,23 @@ public class ProductController {
 
     @PostMapping
     @ResponseStatus(CREATED)
-    public Product addProduct(@RequestBody Product product) {
+    public Product addProduct(@RequestBody @Valid Product product) {
         return productService.addProduct(product);
     }
 
     @PutMapping("/{id}")
     @ResponseStatus(OK)
-    public Product updateProduct(@PathVariable Long id, @RequestBody Product product) {
-        if (productService.getProduct(id).isEmpty()) {
-            throw new IllegalArgumentException("Invalid id");
-        }
+    public Product updateProduct(@PathVariable Long id, @RequestBody @Valid Product product){
         return productService.updateProduct(id, product);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Product> deleteProduct(@PathVariable Long id) {
+    public ResponseEntity<Product> deleteProduct(@PathVariable Long id) throws ProductNotExistsException {
         if (productService.getProduct(id).isEmpty()) {
-            return ResponseEntity.status(NOT_FOUND).build();
+            throw new ProductNotExistsException(id);
         }
         productService.deleteProduct(id);
         return ResponseEntity.ok().build();
     }
+
 }

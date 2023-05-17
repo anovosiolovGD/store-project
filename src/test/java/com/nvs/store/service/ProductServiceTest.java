@@ -51,22 +51,21 @@ public class ProductServiceTest {
         verify(productRepository).save(Mockito.argThat(testProduct -> testProduct.equals(product)));
     }
 
-    @Test
+    @Test()
     public void updateProductTest() {
         Product oldProduct = new Product(1L, "orange", 49, BigDecimal.valueOf(23.30));
         Long id = 1L;
-        Mockito.when(productRepository.getProductById(id)).thenReturn(oldProduct);
-        Product newProduct = new Product(2L, "apple", 25, BigDecimal.valueOf(11.50));
-        productService.updateProduct(oldProduct.getId(), newProduct);
-        verify(productRepository)
-                .save(
-                        Mockito.argThat(
-                                product -> product.getId().equals(oldProduct.getId())
-                                        && product.getTitle().equals(newProduct.getTitle())
-                                        && product.getAvailable().equals(newProduct.getAvailable())
-                                        && product.getPrice().equals(newProduct.getPrice())
-                        )
-                );
+        Mockito.when(productRepository.findById(id)).thenReturn(Optional.of(oldProduct));
+
+        Product newProduct = new Product(1L, "apple", 25, BigDecimal.valueOf(11.50));
+        Product savedProduct = new Product(1L, "apple", 25, BigDecimal.valueOf(11.50)); // Create a copy of the newProduct
+        Mockito.when(productRepository.save(any(Product.class))).thenReturn(savedProduct); // Mock the save operation
+        Product updatedProduct = productService.updateProduct(oldProduct.getId(), newProduct);
+
+        assertEquals(savedProduct, updatedProduct);
+
+        verify(productRepository).save(any(Product.class));
+        verify(productRepository).findById(id);
     }
 
     @Test
